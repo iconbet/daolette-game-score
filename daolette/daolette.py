@@ -130,6 +130,17 @@ class Daolette(IconScoreBase):
         """
         return str(MULTIPLIERS)
 
+    @external(readonly=True)
+    def get_bet_limit(self, n: int) -> int:
+        """
+        Returns the bet limit for the number of selected numbers
+        :param n: No. of selected numbers
+        :return: Bet limit in loop
+        """
+        treasury_score = self.create_interface_score(self._treasury_score.get(), TreasuryInterface)
+        _treasury_min = treasury_score.get_treasury_min()
+        return _treasury_min // BET_LIMIT_RATIOS[n]
+
     @external
     @payable
     def bet_on_numbers(self, numbers: str, user_seed: str = '') -> None:
