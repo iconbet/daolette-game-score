@@ -199,7 +199,6 @@ class Daolette(IconScoreBase):
         """
         A function to redefine the value of self.owner once it is possible.
         To be included through an update if it is added to IconService.
-
         Sets the value of self.owner to the score holding the game treasury.
         """
         if self.msg.sender != self.owner:
@@ -210,13 +209,14 @@ class Daolette(IconScoreBase):
         """
         Generates a random # from tx hash, block timestamp and user provided
         seed. The block timestamp provides the source of unpredictability.
-
         :param user_seed: 'Lucky phrase' provided by user.
         :type user_seed: str
         :return: number from [x / 100000.0 for x in range(100000)] i.e. [0,0.99999]
         :rtype: float
         """
         Logger.debug(f'Entered get_random.', TAG)
+        if self.msg.sender.is_contract:
+            revert("ICONbet: SCORE cant play games")
         seed = (str(bytes.hex(self.tx.hash)) + str(self.now()) + user_seed)
         spin = (int.from_bytes(sha3_256(seed.encode()), "big") % 100000) / 100000.0
         Logger.debug(f'Result of the spin was {spin}.', TAG)
